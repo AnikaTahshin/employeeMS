@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/card";
 
 const CardViewPage = () => {
+
+  const [employeeData, setEmployeeData] = useState()
   const fetchData = async () => {
     try {
       const response = await fetch("/api/posts");
       const data = await response.json();
-      console.log("see response", data);
+      setEmployeeData(data)
     } catch (error) {
       console.log(error);
     }
@@ -26,18 +28,20 @@ const CardViewPage = () => {
 
   return (
     <>
-      <Card>
+      {employeeData?.map((item) => (
+        <Card>
         <CardHeader>
-          <CardTitle>Card Title</CardTitle>
-          <CardDescription>Card Description</CardDescription>
+          <CardTitle>{item.name}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>Card Content</p>
+          <p>{item?.email}</p>
+          <p>{item?.phone}</p>
+          <p>{item?.address}</p>
+
         </CardContent>
-        <CardFooter>
-          <p>Card Footer</p>
-        </CardFooter>
+        
       </Card>
+      )) }
     </>
   );
 };

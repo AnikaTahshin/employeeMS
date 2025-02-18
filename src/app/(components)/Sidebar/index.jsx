@@ -29,16 +29,7 @@ const items = [
     url: "/table",
     icon: Calendar,
   },
-  // {
-  //   title: "Search",
-  //   url: "#",
-  //   icon: Search,
-  // },
-  // {
-  //   title: "Settings",
-  //   url: "#",
-  //   icon: Settings,
-  // },
+  
 ]
 
 export function AppSidebar() {
