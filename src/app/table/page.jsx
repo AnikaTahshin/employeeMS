@@ -40,6 +40,8 @@ const formSchema = z.object({
 const TableViewPage = () => {
   const [employeeData, setEmployeeData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+
   const [selectedData, setSelectedData] = useState(null);
 
   const form = useForm({
@@ -73,6 +75,36 @@ const TableViewPage = () => {
     });
   };
 
+  const handleDelete =async (item) =>{
+    setSelectedData(item);
+    setIsDelete(true);
+
+   
+  }
+
+  const deleteEmployee =async () => {
+    try {
+      
+       let id = selectedData?.id
+      
+
+       console.log("see id:", id);
+    
+      const response = await fetch(`/api/delete/${id}`, {
+        method: "DELETE",
+       
+       
+      });
+    
+      // const data = await response.json();
+      // console.log("Response:", data);
+      
+    
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }
+
   const onSubmit = async (values) => {
     try {
       const body = {
@@ -80,7 +112,6 @@ const TableViewPage = () => {
         ...values
       };
 
-      console.log("sending data to api", body);
     
       const response = await fetch("/api/edit", {
         method: "POST",
@@ -134,10 +165,12 @@ const TableViewPage = () => {
                       size={25}
                     />
                   </Button>
-                  <MdDelete
+                 <Button variant="outline" onClick={() => handleDelete(item)}>
+                 <MdDelete
                     className="border border-spacing-2 border-black m-2 rounded-lg cursor-pointer"
                     size={25}
                   />
+                 </Button>
                 </div>
               </TableCell>
             </TableRow>
@@ -145,6 +178,27 @@ const TableViewPage = () => {
         </TableBody>
       </Table>
 
+
+
+      {/* DELTE DIALOG BOX STARTED */}
+
+      <Dialog open={isDelete} onOpenChange={setIsDelete}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Employee</DialogTitle>
+          </DialogHeader>
+          <h1>Are you sure to delete?</h1>
+
+          <div className="flex flex-row items-center justify-between">
+          <Button onClick={deleteEmployee}>Delete</Button>
+          <Button variant="outline" onClick={() => setIsDelete(false)}>Cancel</Button>
+          </div>
+
+        </DialogContent>
+      </Dialog>
+
+      {/* DELETE DIALOG BOX ENDS */}
+{/* EDIT DIALOG BOX STARTED */}
       <Dialog open={isEdit} onOpenChange={setIsEdit}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -212,6 +266,8 @@ const TableViewPage = () => {
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* eDIT DIALOG BOX ENDS */}
     </>
   );
 };
