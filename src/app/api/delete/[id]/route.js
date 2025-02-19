@@ -15,6 +15,7 @@ export async function DELETE(req, { params }) {
     return NextResponse.json({
       message: "Employee Deleted successfully",
       result,
+      
     });
   } catch (error) {
     console.log(error);

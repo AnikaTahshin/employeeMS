@@ -14,7 +14,7 @@ const CardViewPage = () => {
   const [employeeData, setEmployeeData] = useState()
   const fetchData = async () => {
     try {
-      const response = await fetch("/api/posts");
+      const response = await fetch("/api/lists");
       const data = await response.json();
       setEmployeeData(data)
     } catch (error) {
@@ -28,20 +28,39 @@ const CardViewPage = () => {
 
   return (
     <>
+    <div className="flex flex-row justify-between items-center">
       {employeeData?.map((item) => (
-        <Card>
+        <Card key={item?.id}>
         <CardHeader>
-          <CardTitle>{item.name}</CardTitle>
+          <CardTitle>{item?.name}</CardTitle>
         </CardHeader>
         <CardContent>
           <p>{item?.email}</p>
           <p>{item?.phone}</p>
           <p>{item?.address}</p>
 
+          {item?.image ? (
+                  <div className="w-16 h-16">
+                    <img
+                      src={
+                        item.image.startsWith("/")
+                          ? item.image
+                          : `/${item.image}`
+                      }
+                      alt={`${item.name}'s photo`}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+                ) : (
+                  "No image"
+                )}
+
         </CardContent>
         
       </Card>
       )) }
+
+</div>
     </>
   );
 };
