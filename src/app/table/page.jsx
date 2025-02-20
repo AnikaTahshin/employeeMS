@@ -64,16 +64,18 @@ const TableViewPage = () => {
     },
   });
 
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+
+  console.log("see table page url", BASE_URL)
   const fetchData = async () => {
     try {
-      const response = await fetch("/api/lists");
+      const response = await fetch(`${BASE_URL}/api/lists`);
       const data = await response.json();
-      setLoading(false)
-
+      setLoading(false);
       setEmployeeData(data);
-      setAllData(data);
     } catch (error) {
-      // console.log(error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -96,7 +98,7 @@ const TableViewPage = () => {
   const deleteEmployee = async () => {
     try {
       let id = selectedData?.id;
-      const response = await fetch(`/api/delete/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/delete/${id}`, {
         method: "DELETE",
       });
       const data = await response.json();
@@ -133,7 +135,7 @@ const TableViewPage = () => {
         ...values,
       };
 
-      const response = await fetch("/api/edit", {
+      const response = await fetch(`${BASE_URL}/api/edit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

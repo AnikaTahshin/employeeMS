@@ -29,6 +29,8 @@ const CardViewPage = () => {
   const [selectedData, setSelectedData] = useState(null);
   const { toast } = useToast();
   const { loading, setLoading  } = useAppContext();
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 
   const handleDelete = async (item) => {
     setSelectedData(item);
@@ -38,7 +40,7 @@ const CardViewPage = () => {
   const deleteEmployee = async () => {
     try {
       let id = selectedData?.id;
-      const response = await fetch(`/api/delete/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/delete/${id}`, {
         method: "DELETE",
       });
       const data = await response.json();
@@ -69,7 +71,7 @@ const CardViewPage = () => {
   };
   const fetchData = async () => {
     try {
-      const response = await fetch("/api/lists");
+      const response = await fetch(`${BASE_URL}/api/lists`);
       const data = await response.json();
       setLoading(false)
       setEmployeeData(data);
