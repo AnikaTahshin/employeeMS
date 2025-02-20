@@ -7,6 +7,7 @@ import { FiSun } from "react-icons/fi";
 import { useAppContext } from "../../../../context/context";
 import avater from "../../../../public/images/avater2.png";
 import Image from "next/image";
+import { MdOutlineArrowDropDown } from "react-icons/md";
 
 const Navbar = () => {
   const {
@@ -14,15 +15,15 @@ const Navbar = () => {
     setIsClick,
     isSidebarOpen,
     setIsSidebarOpen,
-    searchQuery, 
-    setSearchQuery 
+    searchQuery,
+    setSearchQuery,
   } = useAppContext();
 
-  console.log("watching from navbar", searchQuery);
   const handleText = (text) => {
-    setSearchQuery(text)
-
+    setSearchQuery(text);
   };
+
+  const showDetails = () => {};
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center w-full mb-7 p-3 bg-slate-400">
       <h1>Logo text</h1>
@@ -51,12 +52,22 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className="w-16 h-16">
+      <div className="w-16 h-16 relative">
         <Image
           src={avater}
-          className="w-full h-full object-cover rounded-full bg-white"
+          className="w-full h-full object-cover rounded-full bg-white cursor-pointer"
           alt=""
+          onClick={showDetails}
         />
+
+        <div className="absolute bg-gray-300 w-4 h-4 rounded-lg bottom-1 right-0">
+        <div className="flex justify-center items-center" >
+          <button >
+            
+            <MdOutlineArrowDropDown size={20} />
+          </button>
+        </div>
+        </div>
       </div>
     </div>
   );

@@ -182,8 +182,8 @@ const TableViewPage = () => {
 
   return (
     <>
-      <div className="w-[100px] p-4">
-        <Button onClick={() => setAddEmployee(true)}>Add Employee</Button>
+      <div className="w-[100px] p-4 ">
+        <Button className="bg-blue-500 hover:bg-gray-500" onClick={() => setAddEmployee(true)}>Add Employee</Button>
       </div>
       {addEmployee && (
         <AddEmployee
@@ -196,22 +196,19 @@ const TableViewPage = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Name</TableHead>
+          <TableHead className="w-[100px]">Image</TableHead>
+
+            <TableHead >Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Phone</TableHead>
             <TableHead>Address</TableHead>
-            <TableHead>Image</TableHead>
-            <TableHead>Action</TableHead>
+            <TableHead className="w-[100px] text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {filteredData.map((item) => (
             <TableRow key={item?.id}>
-              <TableCell className="font-medium">{item?.name}</TableCell>
-              <TableCell>{item?.email}</TableCell>
-              <TableCell>{item?.phone}</TableCell>
-              <TableCell>{item?.address}</TableCell>
               <TableCell>
                 {item?.image ? (
                   <div className="w-16 h-16">
@@ -229,18 +226,23 @@ const TableViewPage = () => {
                   "No image"
                 )}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="font-medium">{item?.name}</TableCell>
+              <TableCell>{item?.email}</TableCell>
+              <TableCell>{item?.phone}</TableCell>
+              <TableCell>{item?.address}</TableCell>
+              
+              <TableCell className="w-[100px]">
                 <div className="flex flex-row justify-center items-center">
-                  <Button variant="outline" onClick={() => handleEdit(item)}>
+                  <Button variant="outline" className="bg-blue-500  hover:bg-gray-500" onClick={() => handleEdit(item)}>
                     <MdModeEdit
-                      className="border border-spacing-2 border-black m-2 rounded-lg cursor-pointer"
-                      size={25}
+                      className="border border-spacing-2 border-none text-white m-2  cursor-pointer"
+                      size={35}
                     />
                   </Button>
-                  <Button variant="outline" onClick={() => handleDelete(item)}>
+                  <Button className="bg-blue-500  hover:bg-gray-500" variant="outline" onClick={() => handleDelete(item)}>
                     <MdDelete
-                      className="border border-spacing-2 border-black m-2 rounded-lg cursor-pointer"
-                      size={25}
+                      className="border border-spacing-2  border-none text-white m-2  cursor-pointer"
+                      size={35}
                     />
                   </Button>
                 </div>

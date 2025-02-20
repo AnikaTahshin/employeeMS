@@ -8,14 +8,63 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 import avater from "../../../public/images/avater2.png"
 import { useAppContext } from "../../../context/context";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const CardViewPage = () => {
   const [employeeData, setEmployeeData] = useState();
   const [filteredData, setFilteredData] = useState([]);
-  
+  const [isDelete, setIsDelete] = useState(false)
+  const [selectedData, setSelectedData] = useState(null);
+  const { toast } = useToast();
+
+  const handleDelete = async (item) => {
+    setSelectedData(item);
+    setIsDelete(true);
+  };
+
+  const deleteEmployee = async () => {
+    try {
+      let id = selectedData?.id;
+      const response = await fetch(`/api/delete/${id}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          variant: "destructive",
+          title: "Success",
+          description: "Employee deleted successfully",
+        });
+        await fetchData();
+        setIsDelete(false);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to delete employee",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.log("Error:", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    }
+  };
   const fetchData = async () => {
     try {
       const response = await fetch("/api/lists");
@@ -90,14 +139,14 @@ const CardViewPage = () => {
               /> */}
 
               {item?.image ? (
-                <div className="w-16 h-16">
+                <div className="w-20 h-20">
                   <img
                     src={
                       item.image.startsWith("/") ? item.image : avater
                     }
                     alt={`${item.name}'s photo`}
                     // className="w-full h-full object-cover rounded-full"
-                    className="w-14 h-14 rounded-full"
+                    className="w-20 h-20 rounded-full"
                   />
                 </div>
               ) : (
@@ -107,13 +156,16 @@ const CardViewPage = () => {
                     }
                     alt={`${item.name}'s photo`}
                     // className="w-full h-full object-cover rounded-full"
-                    className="w-14 h-14 rounded-full"
+                    className="w-20 h-20 rounded-full"
                   />
               )}
               <div className="ml-4">
                 <CardTitle className="text-lg font-bold">
                   {item?.name}
                 </CardTitle>
+                <CardDescription className="text-sm text-gray-600">
+                 {item?.phone}
+                </CardDescription>
                 <CardDescription className="text-sm text-gray-600">
                  {item?.email}
                 </CardDescription>
@@ -123,11 +175,11 @@ const CardViewPage = () => {
               </div>
             </CardHeader>
             
-            <CardFooter className="flex justify-between p-4">
-              <button className="bg-blue-500 text-white py-1 px-4 rounded">
-                Follow
-              </button>
-              <button className="text-blue-500">Message</button>
+            <CardFooter className="flex justify-center p-4">
+              <Button onClick={() => handleDelete(item)} className="bg-blue-500 hover:bg-gray-500 text-white py-1 px-4 rounded">
+                Delete
+              </Button>
+              
             </CardFooter>
           </Card>
         ))}
@@ -136,6 +188,22 @@ const CardViewPage = () => {
           filteredData?.length == 0 && "No Data Found"
         }
       </div>
+
+      <Dialog open={isDelete} onOpenChange={setIsDelete}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Employee</DialogTitle>
+          </DialogHeader>
+          <h1>Are you sure to delete?</h1>
+
+          <div className="flex flex-row items-center justify-between">
+            <Button onClick={deleteEmployee}>Delete</Button>
+            <Button variant="outline" onClick={() => setIsDelete(false)}>
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
