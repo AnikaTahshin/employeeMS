@@ -165,7 +165,11 @@ const TableViewPage = () => {
 
   return (
     <>
-      <Button onClick={() => setAddEmployee(true)}>Add Employee</Button>
+
+    <div className="w-[100px] p-4">
+    <Button  onClick={() => setAddEmployee(true)}>Add Employee</Button>
+
+    </div>
       {addEmployee && (
         <AddEmployee
           addEmployee={addEmployee}
