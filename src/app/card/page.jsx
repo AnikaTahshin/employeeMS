@@ -10,9 +10,12 @@ import {
 } from "@/components/ui/card";
 
 import avater from "../../../public/images/avater2.png"
+import { useAppContext } from "../../../context/context";
 
 const CardViewPage = () => {
   const [employeeData, setEmployeeData] = useState();
+  const [filteredData, setFilteredData] = useState([]);
+  
   const fetchData = async () => {
     try {
       const response = await fetch("/api/lists");
@@ -23,6 +26,22 @@ const CardViewPage = () => {
     }
   };
 
+
+    const { searchQuery } = useAppContext();
+    useEffect(() => {
+        if (searchQuery.trim() === "") {
+          setFilteredData(employeeData);
+        } else {
+          const searchLower = searchQuery.toLowerCase();
+          const filtered = employeeData.filter(
+            (employee) =>
+              employee.name?.toLowerCase().includes(searchLower) ||
+              employee.email?.toLowerCase().includes(searchLower)
+          );
+          setFilteredData(filtered);
+        }
+      }, [searchQuery, employeeData]);
+  
   useEffect(() => {
     fetchData();
   }, []);
@@ -30,7 +49,7 @@ const CardViewPage = () => {
   return (
     <>
       <div className="flex flex-col sm:flex-row justify-around items-center">
-        {employeeData?.map((item) => (
+        {filteredData?.map((item) => (
           //   <Card key={item?.id} className="bg-white border border-gray-200 shadow-lg">
           //   <CardHeader>
           //     <CardTitle>{item?.name}</CardTitle>
@@ -112,6 +131,10 @@ const CardViewPage = () => {
             </CardFooter>
           </Card>
         ))}
+
+        {
+          filteredData?.length == 0 && "No Data Found"
+        }
       </div>
     </>
   );

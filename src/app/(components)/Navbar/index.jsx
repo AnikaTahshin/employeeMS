@@ -14,14 +14,13 @@ const Navbar = () => {
     setIsClick,
     isSidebarOpen,
     setIsSidebarOpen,
-    searchQuery,    // renamed from searchText
+    searchQuery, 
     setSearchQuery 
   } = useAppContext();
 
   console.log("watching from navbar", searchQuery);
   const handleText = (text) => {
     setSearchQuery(text)
-    console.log("text typing", searchQuery);
 
   };
   return (

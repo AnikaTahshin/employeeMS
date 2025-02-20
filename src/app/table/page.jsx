@@ -32,6 +32,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { AddEmployee } from "../(components)/AddEmployee";
 import Image from "next/image";
+import { useAppContext } from "../../../context/context";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -42,6 +43,7 @@ const formSchema = z.object({
 
 const TableViewPage = () => {
   const [employeeData, setEmployeeData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [addEmployee, setAddEmployee] = useState(false);
@@ -49,6 +51,7 @@ const TableViewPage = () => {
   const [selectedData, setSelectedData] = useState(null);
   const { toast } = useToast();
 
+  const { searchQuery } = useAppContext();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,6 +67,7 @@ const TableViewPage = () => {
       const response = await fetch("/api/lists");
       const data = await response.json();
       setEmployeeData(data);
+      setAllData(data);
     } catch (error) {
       console.log(error);
     }
@@ -157,7 +161,20 @@ const TableViewPage = () => {
     }
   };
 
-  
+  // console.log("from table text typing", searchQuery);
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredData(employeeData);
+    } else {
+      const searchLower = searchQuery.toLowerCase();
+      const filtered = employeeData.filter(
+        (employee) =>
+          employee.name?.toLowerCase().includes(searchLower) ||
+          employee.email?.toLowerCase().includes(searchLower)
+      );
+      setFilteredData(filtered);
+    }
+  }, [searchQuery, employeeData]);
 
   useEffect(() => {
     fetchData();
@@ -165,11 +182,9 @@ const TableViewPage = () => {
 
   return (
     <>
-
-    <div className="w-[100px] p-4">
-    <Button  onClick={() => setAddEmployee(true)}>Add Employee</Button>
-
-    </div>
+      <div className="w-[100px] p-4">
+        <Button onClick={() => setAddEmployee(true)}>Add Employee</Button>
+      </div>
       {addEmployee && (
         <AddEmployee
           addEmployee={addEmployee}
@@ -191,7 +206,7 @@ const TableViewPage = () => {
         </TableHeader>
 
         <TableBody>
-          {employeeData?.map((item) => (
+          {filteredData.map((item) => (
             <TableRow key={item?.id}>
               <TableCell className="font-medium">{item?.name}</TableCell>
               <TableCell>{item?.email}</TableCell>
@@ -232,6 +247,13 @@ const TableViewPage = () => {
               </TableCell>
             </TableRow>
           ))}
+          {filteredData.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-4">
+                No employees found matching your search.
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
 
