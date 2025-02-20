@@ -4,7 +4,7 @@ import { createConnection } from "../../../../../lib/db.js";
 export async function DELETE(req, { params }) {
   try {
     const { id } = params;
-    console.log("from server", id);
+    // console.log("from server", id);
     const db = await createConnection();
     const sql =
     "DELETE FROM employee_list WHERE id=?"
@@ -18,7 +18,7 @@ export async function DELETE(req, { params }) {
       
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return NextResponse.json({ error: error.message });
   }
 }

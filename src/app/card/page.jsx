@@ -59,7 +59,7 @@ const CardViewPage = () => {
         });
       }
     } catch (error) {
-      console.log("Error:", error);
+      // console.log("Error:", error);
       toast({
         title: "Error",
         description: "Something went wrong",
@@ -74,7 +74,7 @@ const CardViewPage = () => {
       setLoading(false)
       setEmployeeData(data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
