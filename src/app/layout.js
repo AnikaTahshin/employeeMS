@@ -22,23 +22,25 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <Wrapper>
-            <Toaster />
-            <ThemeProvider
+
+        <ThemeProvider
               attribute="class"
               defaultTheme="system"
               enableSystem
               disableTransitionOnChange
             >
+        <AuthProvider>
+          <Wrapper>
+            <Toaster />
+            
               {children}
-            </ThemeProvider>
           </Wrapper>
         </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

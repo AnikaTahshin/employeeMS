@@ -33,6 +33,8 @@ import { useToast } from "@/hooks/use-toast";
 import { AddEmployee } from "../(components)/AddEmployee";
 import Image from "next/image";
 import { useAppContext } from "../../../context/context";
+import Loader from "../(components)/Loader";
+import { ClipLoader } from "react-spinners";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -51,7 +53,7 @@ const TableViewPage = () => {
   const [selectedData, setSelectedData] = useState(null);
   const { toast } = useToast();
 
-  const { searchQuery } = useAppContext();
+  const { searchQuery,loading, setLoading  } = useAppContext();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,6 +68,8 @@ const TableViewPage = () => {
     try {
       const response = await fetch("/api/lists");
       const data = await response.json();
+      setLoading(false)
+
       setEmployeeData(data);
       setAllData(data);
     } catch (error) {
@@ -138,6 +142,7 @@ const TableViewPage = () => {
       });
 
       if (response.ok) {
+        setLoading(false)
         toast({
           title: "Success",
           description: "Employee updated successfully",
@@ -182,23 +187,27 @@ const TableViewPage = () => {
 
   return (
     <>
-      <div className="w-[100px] p-4 ">
-        <Button className="bg-blue-500 hover:bg-gray-500" onClick={() => setAddEmployee(true)}>Add Employee</Button>
+  {loading ? (
+    <div className="flex justify-center items-center h-screen">
+      <ClipLoader color={"#000"} size={50} />
+    </div>
+  ) : (
+    <>
+      <div className="p-4">
+        <Button className="bg-blue-500 hover:bg-gray-500" onClick={() => setAddEmployee(true)}>
+          Add Employee
+        </Button>
       </div>
+
       {addEmployee && (
-        <AddEmployee
-          addEmployee={addEmployee}
-          setAddEmployee={setAddEmployee}
-          fetchData={fetchData}
-        />
+        <AddEmployee addEmployee={addEmployee} setAddEmployee={setAddEmployee} fetchData={fetchData} />
       )}
 
       <Table>
         <TableHeader>
           <TableRow>
-          <TableHead className="w-[100px]">Image</TableHead>
-
-            <TableHead >Name</TableHead>
+            <TableHead className="w-[100px]">Image</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Phone</TableHead>
             <TableHead>Address</TableHead>
@@ -207,17 +216,13 @@ const TableViewPage = () => {
         </TableHeader>
 
         <TableBody>
-          {filteredData.map((item) => (
+          {filteredData?.map((item) => (
             <TableRow key={item?.id}>
               <TableCell>
                 {item?.image ? (
                   <div className="w-16 h-16">
                     <img
-                      src={
-                        item.image.startsWith("/")
-                          ? item.image
-                          : `/${item.image}`
-                      }
+                      src={item.image.startsWith("/") ? item.image : `/${item.image}`}
                       alt={`${item.name}'s photo`}
                       className="w-full h-full object-cover rounded-full"
                     />
@@ -230,20 +235,14 @@ const TableViewPage = () => {
               <TableCell>{item?.email}</TableCell>
               <TableCell>{item?.phone}</TableCell>
               <TableCell>{item?.address}</TableCell>
-              
+
               <TableCell className="w-[100px]">
-                <div className="flex flex-row justify-center items-center">
-                  <Button variant="outline" className="bg-blue-500  hover:bg-gray-500" onClick={() => handleEdit(item)}>
-                    <MdModeEdit
-                      className="border border-spacing-2 border-none text-white m-2  cursor-pointer"
-                      size={35}
-                    />
+                <div className="flex justify-center items-center space-x-2">
+                  <Button variant="outline" className="bg-blue-500 hover:bg-gray-500" onClick={() => handleEdit(item)}>
+                    <MdModeEdit className="text-white cursor-pointer" size={25} />
                   </Button>
-                  <Button className="bg-blue-500  hover:bg-gray-500" variant="outline" onClick={() => handleDelete(item)}>
-                    <MdDelete
-                      className="border border-spacing-2  border-none text-white m-2  cursor-pointer"
-                      size={35}
-                    />
+                  <Button variant="outline" className="bg-red-500 hover:bg-gray-500" onClick={() => handleDelete(item)}>
+                    <MdDelete className="text-white cursor-pointer" size={25} />
                   </Button>
                 </div>
               </TableCell>
@@ -258,107 +257,71 @@ const TableViewPage = () => {
           )}
         </TableBody>
       </Table>
-
-      {/* ADD EMPLOYEE STARTS */}
-
-      {/* ADD EMPLOYEE ENDS */}
-
-      {/* DELTE DIALOG BOX STARTED */}
-
-      <Dialog open={isDelete} onOpenChange={setIsDelete}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Delete Employee</DialogTitle>
-          </DialogHeader>
-          <h1>Are you sure to delete?</h1>
-
-          <div className="flex flex-row items-center justify-between">
-            <Button onClick={deleteEmployee}>Delete</Button>
-            <Button variant="outline" onClick={() => setIsDelete(false)}>
-              Cancel
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* DELETE DIALOG BOX ENDS */}
-      {/* EDIT DIALOG BOX STARTED */}
-      <Dialog open={isEdit} onOpenChange={setIsEdit}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Edit Employee</DialogTitle>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter Name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter Email"
-                        type="email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter Phone" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter Address" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <DialogFooter>
-                <Button type="submit">Save Changes</Button>
-                <Button variant="outline" onClick={() => setIsEdit(false)}>
-                  Cancel
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      {/* eDIT DIALOG BOX ENDS */}
     </>
+  )}
+
+  {/* DELETE DIALOG BOX */}
+  <Dialog open={isDelete} onOpenChange={setIsDelete}>
+    <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>Delete Employee</DialogTitle>
+      </DialogHeader>
+      <p>Are you sure you want to delete this employee?</p>
+      <div className="flex justify-between">
+        <Button onClick={deleteEmployee}>Delete</Button>
+        <Button variant="outline" onClick={() => setIsDelete(false)}>
+          Cancel
+        </Button>
+      </div>
+    </DialogContent>
+  </Dialog>
+
+  {/* EDIT DIALOG BOX */}
+  <Dialog open={isEdit} onOpenChange={setIsEdit}>
+    <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>Edit Employee</DialogTitle>
+      </DialogHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField control={form.control} name="name" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl><Input placeholder="Enter Name" {...field} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="email" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl><Input placeholder="Enter Email" type="email" {...field} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="phone" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone</FormLabel>
+              <FormControl><Input placeholder="Enter Phone" {...field} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="address" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address</FormLabel>
+              <FormControl><Input placeholder="Enter Address" {...field} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+          <DialogFooter>
+            <Button type="submit">Save Changes</Button>
+            <Button variant="outline" onClick={() => setIsEdit(false)}>Cancel</Button>
+          </DialogFooter>
+        </form>
+      </Form>
+    </DialogContent>
+  </Dialog>
+</>
+
   );
 };
 

@@ -8,6 +8,7 @@ import { useAppContext } from "../../../../context/context";
 import avater from "../../../../public/images/avater2.png";
 import Image from "next/image";
 import { MdOutlineArrowDropDown } from "react-icons/md";
+import { ModeToggle } from "../mode-toggle";
 
 const Navbar = () => {
   const {
@@ -44,11 +45,12 @@ const Navbar = () => {
 
       <div className="flex justify-between items-center gap-5">
         <div className=" md:flex justify-between items-center gap-5">
-          <div>
-            <button>
+          <ModeToggle />
+          {/* <div>
+            <button onClick={() => setIsClick(!isClick)}>
               <FiSun className="cursor-pointer text-gray-500" size={24} />
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 

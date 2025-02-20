@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
-import avater from "../../../public/images/avater2.png"
+import avater from "../../../public/images/avater2.png";
 import { useAppContext } from "../../../context/context";
 import {
   Dialog,
@@ -20,13 +20,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { ClipLoader } from "react-spinners";
 
 const CardViewPage = () => {
   const [employeeData, setEmployeeData] = useState();
   const [filteredData, setFilteredData] = useState([]);
-  const [isDelete, setIsDelete] = useState(false)
+  const [isDelete, setIsDelete] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const { toast } = useToast();
+  const { loading, setLoading  } = useAppContext();
 
   const handleDelete = async (item) => {
     setSelectedData(item);
@@ -69,65 +71,45 @@ const CardViewPage = () => {
     try {
       const response = await fetch("/api/lists");
       const data = await response.json();
+      setLoading(false)
       setEmployeeData(data);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const { searchQuery } = useAppContext();
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredData(employeeData);
+    } else {
+      const searchLower = searchQuery.toLowerCase();
+      const filtered = employeeData.filter(
+        (employee) =>
+          employee.name?.toLowerCase().includes(searchLower) ||
+          employee.email?.toLowerCase().includes(searchLower)
+      );
+      setFilteredData(filtered);
+    }
+  }, [searchQuery, employeeData]);
 
-    const { searchQuery } = useAppContext();
-    useEffect(() => {
-        if (searchQuery.trim() === "") {
-          setFilteredData(employeeData);
-        } else {
-          const searchLower = searchQuery.toLowerCase();
-          const filtered = employeeData.filter(
-            (employee) =>
-              employee.name?.toLowerCase().includes(searchLower) ||
-              employee.email?.toLowerCase().includes(searchLower)
-          );
-          setFilteredData(filtered);
-        }
-      }, [searchQuery, employeeData]);
-  
   useEffect(() => {
     fetchData();
   }, []);
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row justify-around items-center">
+      {
+        loading ? 
+        
+        <div className="flex justify-center items-center h-screen">
+      <ClipLoader color={"#000"} size={50} />
+    </div>
+        :
+
+        (
+          <div className="flex flex-col sm:flex-row justify-around items-center">
         {filteredData?.map((item) => (
-          //   <Card key={item?.id} className="bg-white border border-gray-200 shadow-lg">
-          //   <CardHeader>
-          //     <CardTitle>{item?.name}</CardTitle>
-          //   </CardHeader>
-          //   <CardContent>
-          //     <p>{item?.email}</p>
-          //     <p>{item?.phone}</p>
-          //     <p>{item?.address}</p>
-
-          //     {item?.image ? (
-          //             <div className="w-16 h-16">
-          //               <img
-          //                 src={
-          //                   item.image.startsWith("/")
-          //                     ? item.image
-          //                     : `/${item.image}`
-          //                 }
-          //                 alt={`${item.name}'s photo`}
-          //                 className="w-full h-full object-cover rounded-full"
-          //               />
-          //             </div>
-          //           ) : (
-          //             "No image"
-          //           )}
-
-          //   </CardContent>
-
-          // </Card>
-
           <Card
             key={item?.id}
             className="w-80 bg-gray-100 border border-gray-300 shadow-md rounded-lg"
@@ -141,9 +123,7 @@ const CardViewPage = () => {
               {item?.image ? (
                 <div className="w-20 h-20">
                   <img
-                    src={
-                      item.image.startsWith("/") ? item.image : avater
-                    }
+                    src={item.image.startsWith("/") ? item.image : avater}
                     alt={`${item.name}'s photo`}
                     // className="w-full h-full object-cover rounded-full"
                     className="w-20 h-20 rounded-full"
@@ -151,43 +131,43 @@ const CardViewPage = () => {
                 </div>
               ) : (
                 <img
-                    src={
-                       avater
-                    }
-                    alt={`${item.name}'s photo`}
-                    // className="w-full h-full object-cover rounded-full"
-                    className="w-20 h-20 rounded-full"
-                  />
+                  src={avater}
+                  alt={`${item.name}'s photo`}
+                  // className="w-full h-full object-cover rounded-full"
+                  className="w-20 h-20 rounded-full"
+                />
               )}
               <div className="ml-4">
                 <CardTitle className="text-lg font-bold">
                   {item?.name}
                 </CardTitle>
                 <CardDescription className="text-sm text-gray-600">
-                 {item?.phone}
+                  {item?.phone}
                 </CardDescription>
                 <CardDescription className="text-sm text-gray-600">
-                 {item?.email}
+                  {item?.email}
                 </CardDescription>
                 <CardDescription className="text-sm text-gray-600">
-                 {item?.address}
+                  {item?.address}
                 </CardDescription>
               </div>
             </CardHeader>
-            
+
             <CardFooter className="flex justify-center p-4">
-              <Button onClick={() => handleDelete(item)} className="bg-blue-500 hover:bg-gray-500 text-white py-1 px-4 rounded">
+              <Button
+                onClick={() => handleDelete(item)}
+                className="bg-blue-500 hover:bg-gray-500 text-white py-1 px-4 rounded"
+              >
                 Delete
               </Button>
-              
             </CardFooter>
           </Card>
         ))}
 
-        {
-          filteredData?.length == 0 && "No Data Found"
-        }
+        {filteredData?.length == 0 && "No Data Found"}
       </div>
+        )
+      }
 
       <Dialog open={isDelete} onOpenChange={setIsDelete}>
         <DialogContent className="sm:max-w-md">
