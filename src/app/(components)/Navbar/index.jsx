@@ -11,23 +11,20 @@ import { MdOutlineArrowDropDown } from "react-icons/md";
 import { ModeToggle } from "../mode-toggle";
 
 const Navbar = () => {
-  const {
-    isClick,
-    setIsClick,
-    isSidebarOpen,
-    setIsSidebarOpen,
-    searchQuery,
-    setSearchQuery,
-  } = useAppContext();
+  const { searchQuery, setSearchQuery } = useAppContext();
+
+  const [openDetails, setOpenDetails] = useState(false);
 
   const handleText = (text) => {
     setSearchQuery(text);
   };
 
-  const showDetails = () => {};
+  const showDetails = () => {
+    setOpenDetails(!openDetails);
+  };
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center w-full mb-7 p-3 bg-slate-400">
-      <h1>Logo text</h1>
+      <h1 className="text-3xl">employeMS</h1>
       <div className="relative">
         <input
           placeholder="Search here..."
@@ -54,23 +51,38 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className="w-16 h-16 relative">
-        <Image
-          src={avater}
-          className="w-full h-full object-cover rounded-full bg-white cursor-pointer"
-          alt=""
-          onClick={showDetails}
-        />
+      <div className="relative w-16 h-16">
+  {/* Avatar Image */}
+  <Image
+    src={avater}
+    className="w-full h-full object-cover rounded-full bg-white cursor-pointer"
+    alt="User Avatar"
+    onClick={showDetails}
+  />
 
-        <div className="absolute bg-gray-300 w-4 h-4 rounded-lg bottom-1 right-0">
-        <div className="flex justify-center items-center" >
-          <button >
-            
-            <MdOutlineArrowDropDown size={20} />
-          </button>
-        </div>
-        </div>
+  {/* Dropdown Icon */}
+  <div className="absolute bg-gray-300 w-4 h-4 rounded-full bottom-1 right-0 flex justify-center items-center cursor-pointer" onClick={showDetails}>
+    <MdOutlineArrowDropDown size={20} />
+  </div>
+
+  {/* Dropdown Menu */}
+  {openDetails && (
+    <div className="absolute md:ml-[-65px] top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200 z-50">
+      <div className="space-y-2 py-2">
+        <p className="text-gray-700 font-medium hover:bg-gray-100 px-4 py-2 rounded cursor-pointer">
+          My Profile
+        </p>
+        <p className="text-gray-700 font-medium hover:bg-gray-100 px-4 py-2 rounded cursor-pointer">
+          Settings
+        </p>
+        <p className="text-gray-700 font-medium hover:bg-gray-100 px-4 py-2 rounded cursor-pointer">
+          Privacy
+        </p>
       </div>
+    </div>
+  )}
+</div>
+
     </div>
   );
 };
