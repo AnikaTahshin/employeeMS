@@ -41,7 +41,7 @@ const Navbar = () => {
       {/* RIGHT SIDE */}
 
       <div className="flex items-center gap-2 md:gap-5">
-        <div className="hidden sm:block">
+        <div className="hidden sm:block mr-10">
           <ModeToggle />
           {/* <div>
             <button onClick={() => setIsClick(!isClick)}>

@@ -30,11 +30,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { AddEmployee } from "../(components)/AddEmployee";
 import Image from "next/image";
 import { useAppContext } from "../../../context/context";
-import Loader from "../(components)/Loader";
+// import Loader from "../(components)/Loader";
 import { ClipLoader } from "react-spinners";
+import { AddEmployee } from "../(components)/AddEmployee/AddEmployee";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -67,14 +67,26 @@ const TableViewPage = () => {
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const fetchData = async () => {
     try {
+      setLoading(true); 
+  
       const response = await fetch(`${BASE_URL}/api/lists`);
-      const data = await response.json();
-      setLoading(false);
-      setEmployeeData(data);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json(); 
+  
+      console.log("Fetched data:", data);
+  
+      setEmployeeData(data); 
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false); 
     }
   };
+  
 
   const handleEdit = (item) => {
     setSelectedData(item);
@@ -100,7 +112,7 @@ const TableViewPage = () => {
       });
       const data = await response.json();
 
-      if (response.ok) {
+      if (data.ok) {
         toast({
           variant: "destructive",
           title: "Success",
@@ -127,47 +139,60 @@ const TableViewPage = () => {
 
   const onSubmit = async (values) => {
     try {
-      const body = {
-        id: selectedData?.id,
-        ...values,
-      };
-
-      const response = await fetch(`${BASE_URL}/api/edit`, {
-        method: "POST",
+      if (!selectedData?.id) {
+        toast({
+          title: "Error",
+          description: "Invalid Employee ID",
+          variant: "destructive",
+        });
+        return;
+      }
+  
+      setLoading(true); 
+  
+      const response = await fetch(`${BASE_URL}/api/edit/${selectedData.id}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(values), 
       });
-
-      if (response.ok) {
-        setLoading(false);
+  
+      const responseData = await response.json(); 
+      setIsEdit(false)
+      // console.log("Editing Response:", responseData);
+  
+      if (responseData?.statusbar == 200) {
         toast({
           title: "Success",
-          description: "Employee updated successfully",
+
+          description: responseData?.message,
+          
         });
         await fetchData();
         setIsEdit(false);
       } else {
         toast({
           title: "Error",
-          description: "Failed to update employee",
+          description: responseData?.error || "Failed to update employee",
           variant: "destructive",
         });
       }
     } catch (error) {
-      // console.log("Error:", error);
+      console.error("Error:", error);
       toast({
         title: "Error",
         description: "Something went wrong",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false); 
     }
   };
+  
 
-  // console.log("from table text typing", searchQuery);
   useEffect(() => {
-    if (searchQuery.trim() === "") {
+    if (!searchQuery) {
       setFilteredData(employeeData);
     } else {
       const searchLower = searchQuery.toLowerCase();
@@ -179,6 +204,8 @@ const TableViewPage = () => {
       setFilteredData(filtered);
     }
   }, [searchQuery, employeeData]);
+
+  // console.log("hello data", filteredData)
 
   useEffect(() => {
     fetchData();
@@ -301,7 +328,7 @@ const TableViewPage = () => {
       </Dialog>
 
       {/* EDIT DIALOG BOX */}
-      <Dialog open={isEdit} onOpenChange={setIsEdit}>
+      <Dialog open={isEdit} onOpenChange={setIsEdit} >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Employee</DialogTitle>
@@ -366,7 +393,7 @@ const TableViewPage = () => {
               />
               <DialogFooter>
                 <Button type="submit">Save Changes</Button>
-                <Button variant="outline" onClick={() => setIsEdit(false)}>
+                <Button type="button" variant="outline" onClick={() => {console.log("click cancel"); setIsEdit(false)}}>
                   Cancel
                 </Button>
               </DialogFooter>

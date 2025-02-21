@@ -28,9 +28,8 @@ const CardViewPage = () => {
   const [isDelete, setIsDelete] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const { toast } = useToast();
-  const { loading, setLoading  } = useAppContext();
+  const { loading, setLoading } = useAppContext();
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
 
   const handleDelete = async (item) => {
     setSelectedData(item);
@@ -73,7 +72,7 @@ const CardViewPage = () => {
     try {
       const response = await fetch(`${BASE_URL}/api/lists`);
       const data = await response.json();
-      setLoading(false)
+      setLoading(false);
       setEmployeeData(data);
     } catch (error) {
       // console.log(error);
@@ -101,75 +100,70 @@ const CardViewPage = () => {
 
   return (
     <>
-      {
-        loading ? 
-        
+      {loading ? (
         <div className="flex justify-center items-center h-screen">
-      <ClipLoader color={"#000"} size={50} />
-    </div>
-        :
-
-        (
-          <div className="flex flex-col sm:flex-row justify-around items-center">
-        {filteredData?.map((item) => (
-          <Card
-            key={item?.id}
-            className="w-80 bg-gray-100 border border-gray-300 shadow-md rounded-lg"
-          >
-            <CardHeader className="flex items-center p-4">
-              {/* <img
+          <ClipLoader color={"#000"} size={50} />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+          {filteredData?.map((item) => (
+            <Card
+              key={item?.id}
+              className=" md:w-70 bg-gray-100 border border-gray-300 shadow-md rounded-lg"
+            >
+              <CardHeader className="flex items-center p-4">
+                {/* <img
                 src="/images/avatar.jpg"
                 alt="Profile"
               /> */}
 
-              {item?.image ? (
-                <div className="w-20 h-20">
+                {item?.image ? (
+                  <div className="w-20 h-20">
+                    <img
+                      src={item.image.startsWith("/") ? item.image : avater}
+                      alt={`${item.name}'s photo`}
+                      // className="w-full h-full object-cover rounded-full"
+                      className="w-20 h-20 rounded-full"
+                    />
+                  </div>
+                ) : (
                   <img
-                    src={item.image.startsWith("/") ? item.image : avater}
+                    src={avater}
                     alt={`${item.name}'s photo`}
                     // className="w-full h-full object-cover rounded-full"
                     className="w-20 h-20 rounded-full"
                   />
+                )}
+                <div className="ml-4">
+                  <CardTitle className="text-lg font-bold">
+                    {item?.name}
+                  </CardTitle>
+                  <CardDescription className="text-sm text-gray-600">
+                    {item?.phone}
+                  </CardDescription>
+                  <CardDescription className="text-sm text-gray-600">
+                    {item?.email}
+                  </CardDescription>
+                  <CardDescription className="text-sm text-gray-600">
+                    {item?.address}
+                  </CardDescription>
                 </div>
-              ) : (
-                <img
-                  src={avater}
-                  alt={`${item.name}'s photo`}
-                  // className="w-full h-full object-cover rounded-full"
-                  className="w-20 h-20 rounded-full"
-                />
-              )}
-              <div className="ml-4">
-                <CardTitle className="text-lg font-bold">
-                  {item?.name}
-                </CardTitle>
-                <CardDescription className="text-sm text-gray-600">
-                  {item?.phone}
-                </CardDescription>
-                <CardDescription className="text-sm text-gray-600">
-                  {item?.email}
-                </CardDescription>
-                <CardDescription className="text-sm text-gray-600">
-                  {item?.address}
-                </CardDescription>
-              </div>
-            </CardHeader>
+              </CardHeader>
 
-            <CardFooter className="flex justify-center p-4">
-              <Button
-                onClick={() => handleDelete(item)}
-                className="bg-blue-500 hover:bg-gray-500 text-white py-1 px-4 rounded"
-              >
-                Delete
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
+              <CardFooter className="flex justify-center p-4">
+                <Button
+                  onClick={() => handleDelete(item)}
+                  className="bg-blue-500 hover:bg-gray-500 text-white py-1 px-4 rounded"
+                >
+                  Delete
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
 
-        {filteredData?.length == 0 && "No Data Found"}
-      </div>
-        )
-      }
+          {filteredData?.length == 0 && "No Data Found"}
+        </div>
+      )}
 
       <Dialog open={isDelete} onOpenChange={setIsDelete}>
         <DialogContent className="sm:max-w-md">
