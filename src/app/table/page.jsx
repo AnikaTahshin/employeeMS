@@ -65,8 +65,6 @@ const TableViewPage = () => {
   });
 
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-  console.log("see table page url", BASE_URL);
   const fetchData = async () => {
     try {
       const response = await fetch(`${BASE_URL}/api/lists`);
