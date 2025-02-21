@@ -4,16 +4,11 @@ import Wrapper from "./wrapper";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "../../context/context";
 import { ThemeProvider } from "./(components)/theme-provider";
+import { cn } from "@/lib/utils";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+
+
 
 export const metadata = {
   title: "Employee Management",
@@ -22,9 +17,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      suppressHydrationWarning
+      className={cn(
+        "min-h-screen bg-background font-sans antialiased",
+      )}
+        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
 
         <ThemeProvider

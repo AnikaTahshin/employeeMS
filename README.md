@@ -1,8 +1,26 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+##  Installation & Setup
 
-First, run the development server:
+1. Clone the repository
+
+git clone https://github.com/your-username/employee-management.git
+
+2. Navigate to project directory    
+
+cd employee-management
+
+3. Install dependencies
+
+npm install
+
+4. Create a `.env.local` file in the root directory and add necessary environment variables
+
+
+NEXT_PUBLIC_API_URL=http://localhost:3000
+
+5. Run the development server
+
 
 ```bash
 npm run dev
@@ -13,6 +31,13 @@ pnpm dev
 # or
 bun dev
 ```
+
+6. Open your browser and navigate to `http://localhost:3000` to see the application in action
+
+
+
+
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

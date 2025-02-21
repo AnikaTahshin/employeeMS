@@ -3,14 +3,14 @@
 @tailwind utilities;
 *,
 *::before,
-*::after{
+*::after {
   box-sizing: border-box;
 }
 
 html,
 body,
 #root,
-.app{
+.app {
   height: 100%;
   width: 100%;
   /* @apply text-sm; */
@@ -99,7 +99,6 @@ body,
   }
 }
 
-
 @layer base {
   :root {
     --sidebar-background: 0 0% 98%;
@@ -123,5 +122,3 @@ body,
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
-
-

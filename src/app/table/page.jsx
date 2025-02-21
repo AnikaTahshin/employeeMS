@@ -214,7 +214,7 @@ const TableViewPage = () => {
   return (
     <>
       {loading ? (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex justify-center items-center">
           <ClipLoader color={"#000"} size={50} />
         </div>
       ) : (
